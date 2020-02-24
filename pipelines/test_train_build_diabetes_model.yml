@@ -1,0 +1,38 @@
+pr: none
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - scripts/
+
+variables:
+- template: /variables.yml
+- group: Connection_parameters
+
+pool:
+  vmImage: ubuntu-latest
+  
+stages:
+
+- stage: 'Trigger_AML_Pipeline'
+  displayName: 'Train model'
+  jobs:
+  - job: 'Deploy_AML_pipeline'
+    displayName: "Deploy AML pipeline"
+    container: mcr.microsoft.com/mlops/python:latest
+    timeoutInMinutes: 0
+    steps:
+    - task: AzureCLI@1
+      inputs:
+        azureSubscription: $(AML_WORKSPACE_SERVICE_CONNECTION)
+        scriptLocation: inlineScript
+        workingDirectory: $(Build.SourcesDirectory)
+        inlineScript: |
+          python $(AML_PIPELINE_PATH) --subscription_id $(SUBSCRIPTION_ID) --resource_group $(RESOURCE_GROUP) --base_name $(BASE_NAME)
+            
+
+            
+
+      

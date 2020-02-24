@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/mlops/python:latest
+
+COPY /data/* /data/
+COPY /pipelines/create_aml_pipeline.py /pipelines/
+COPY /variables.yml /pipelines/
